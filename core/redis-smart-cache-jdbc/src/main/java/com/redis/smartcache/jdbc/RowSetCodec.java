@@ -12,6 +12,7 @@ import javax.sql.RowSetMetaData;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetMetaDataImpl;
 
+import com.redis.smartcache.jdbc.codec.ArrayColumnCodec;
 import com.redis.smartcache.jdbc.codec.BigDecimalColumnCodec;
 import com.redis.smartcache.jdbc.codec.BinaryColumnCodec;
 import com.redis.smartcache.jdbc.codec.BlobColumnCodec;
@@ -129,6 +130,8 @@ public class RowSetCodec implements RedisCodec<String, RowSet> {
                 return new BinaryColumnCodec(columnIndex);
             case Types.BLOB:
                 return new BlobColumnCodec(columnIndex);
+            case Types.ARRAY:
+                return new ArrayColumnCodec(columnIndex);
             default:
                 throw new SQLException("Column type no supported: " + columnType);
         }
