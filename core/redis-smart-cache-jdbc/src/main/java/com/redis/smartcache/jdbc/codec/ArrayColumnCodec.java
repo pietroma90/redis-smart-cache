@@ -49,7 +49,7 @@ public class ArrayColumnCodec extends NullableColumnCodec<Array> {
      *   [1, 2, 3]        -> {1,2,3}
      *   null elements    -> {1,NULL,3}
      */
-    static String toPostgresArrayString(Object baseArray) {
+    public static String toPostgresArrayString(Object baseArray) {
         if (baseArray == null) {
             return "{}";
         }
