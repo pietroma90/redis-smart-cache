@@ -87,6 +87,69 @@ class ArrayColumnCodecTest {
     }
 
     @Test
+    void encodeDecodeRoundtrip_integerArray() throws SQLException {
+        ByteBuf buf = Unpooled.buffer(1024);
+
+        ArrayColumnCodec codec = new ArrayColumnCodec(1);
+        Array fakeArray = new SimpleArray(new Object[]{10, 20, 30});
+
+        buf.writeBoolean(false);
+        codec.write(buf, fakeArray);
+
+        CachedRowSet rowSet = buildSingleColumnRowSet(Types.VARCHAR);
+        rowSet.moveToInsertRow();
+        codec.decode(buf, rowSet);
+        rowSet.insertRow();
+        rowSet.moveToCurrentRow();
+        rowSet.beforeFirst();
+
+        rowSet.next();
+        assertEquals("{10,20,30}", rowSet.getString(1));
+    }
+
+    @Test
+    void encodeDecodeRoundtrip_longArray() throws SQLException {
+        ByteBuf buf = Unpooled.buffer(1024);
+
+        ArrayColumnCodec codec = new ArrayColumnCodec(1);
+        Array fakeArray = new SimpleArray(new Object[]{100L, 200L, 300L});
+
+        buf.writeBoolean(false);
+        codec.write(buf, fakeArray);
+
+        CachedRowSet rowSet = buildSingleColumnRowSet(Types.VARCHAR);
+        rowSet.moveToInsertRow();
+        codec.decode(buf, rowSet);
+        rowSet.insertRow();
+        rowSet.moveToCurrentRow();
+        rowSet.beforeFirst();
+
+        rowSet.next();
+        assertEquals("{100,200,300}", rowSet.getString(1));
+    }
+
+    @Test
+    void encodeDecodeRoundtrip_doubleArray() throws SQLException {
+        ByteBuf buf = Unpooled.buffer(1024);
+
+        ArrayColumnCodec codec = new ArrayColumnCodec(1);
+        Array fakeArray = new SimpleArray(new Object[]{1.1, 2.2, 3.3});
+
+        buf.writeBoolean(false);
+        codec.write(buf, fakeArray);
+
+        CachedRowSet rowSet = buildSingleColumnRowSet(Types.VARCHAR);
+        rowSet.moveToInsertRow();
+        codec.decode(buf, rowSet);
+        rowSet.insertRow();
+        rowSet.moveToCurrentRow();
+        rowSet.beforeFirst();
+
+        rowSet.next();
+        assertEquals("{1.1,2.2,3.3}", rowSet.getString(1));
+    }
+
+    @Test
     void encodeDecodeRoundtrip_nullArray() throws SQLException {
         ByteBuf buf = Unpooled.buffer(1024);
 
@@ -118,7 +181,6 @@ class ArrayColumnCodecTest {
     void rowSetCodec_encodeDecodeArrayColumn() throws SQLException {
         RowSetCodec codec = new RowSetCodec(BUFFER_CAPACITY);
 
-        // Use VARCHAR: codec serializes arrays as strings, VARCHAR holds the result
         CachedRowSet source = buildSingleColumnRowSet(Types.VARCHAR);
         String arrayValue = "{10,20,30}";
 
